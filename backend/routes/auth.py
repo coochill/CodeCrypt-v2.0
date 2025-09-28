@@ -1,4 +1,4 @@
-from flask import Blueprint, request, jsonify
+from flask import Blueprint, request, jsonify, current_app
 from flask_jwt_extended import create_access_token, jwt_required, get_jwt_identity
 from werkzeug.security import check_password_hash
 
@@ -25,8 +25,10 @@ def register():
         if len(password) < 6:
             return jsonify({'message': 'Password must be at least 6 characters long'}), 400
         
-        # Check if user already exists
+        # Import here to avoid circular imports
         from app import db, User
+        
+        # Check if user already exists
         if User.query.filter_by(email=email).first():
             return jsonify({'message': 'Email already registered'}), 409
         
@@ -38,8 +40,8 @@ def register():
         db.session.add(user)
         db.session.commit()
         
-        # Create access token
-        access_token = create_access_token(identity=user.id)
+        # Create access token (identity must be str for newer flask-jwt-extended)
+        access_token = create_access_token(identity=str(user.id))
         
         return jsonify({
             'message': 'User registered successfully',
@@ -72,8 +74,7 @@ def login():
         if not user or not user.check_password(password):
             return jsonify({'message': 'Invalid credentials'}), 401
         
-        # Create access token
-        access_token = create_access_token(identity=user.id)
+        access_token = create_access_token(identity=str(user.id))
         
         return jsonify({
             'message': 'Login successful',
@@ -90,6 +91,10 @@ def get_current_user():
     """Get current user information"""
     try:
         user_id = get_jwt_identity()
+        try:
+            user_id = int(user_id)
+        except (TypeError, ValueError):
+            return jsonify({'message': 'Invalid token subject'}), 422
         from app import User
         user = User.query.get(user_id)
         
@@ -107,6 +112,10 @@ def update_profile():
     """Update user profile"""
     try:
         user_id = get_jwt_identity()
+        try:
+            user_id = int(user_id)
+        except (TypeError, ValueError):
+            return jsonify({'message': 'Invalid token subject'}), 422
         from app import db, User
         user = User.query.get(user_id)
         
@@ -167,6 +176,10 @@ def delete_account():
     """Delete user account"""
     try:
         user_id = get_jwt_identity()
+        try:
+            user_id = int(user_id)
+        except (TypeError, ValueError):
+            return jsonify({'message': 'Invalid token subject'}), 422
         from app import db, User
         user = User.query.get(user_id)
         

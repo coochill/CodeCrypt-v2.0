@@ -1,4 +1,4 @@
-from flask import Blueprint, request, jsonify, current_app
+from flask import Blueprint, request, jsonify
 from flask_jwt_extended import jwt_required, get_jwt_identity
 from utils.ciphers import CIPHER_FUNCTIONS
 
@@ -58,6 +58,7 @@ def encode_text():
     except ValueError as e:
         return jsonify({'message': str(e)}), 400
     except Exception as e:
+        from app import db
         db.session.rollback()
         return jsonify({'message': 'Encoding failed', 'error': str(e)}), 500
 
@@ -115,6 +116,7 @@ def decode_text():
     except ValueError as e:
         return jsonify({'message': str(e)}), 400
     except Exception as e:
+        from app import db
         db.session.rollback()
         return jsonify({'message': 'Decoding failed', 'error': str(e)}), 500
 
@@ -177,6 +179,7 @@ def delete_history_item(history_id):
         return jsonify({'message': 'History item deleted successfully'}), 200
         
     except Exception as e:
+        from app import db
         db.session.rollback()
         return jsonify({'message': 'Failed to delete history item', 'error': str(e)}), 500
 
@@ -198,6 +201,7 @@ def clear_history():
         }), 200
         
     except Exception as e:
+        from app import db
         db.session.rollback()
         return jsonify({'message': 'Failed to clear history', 'error': str(e)}), 500
 

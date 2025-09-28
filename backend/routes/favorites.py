@@ -44,8 +44,8 @@ def add_favorite():
 @jwt_required()
 def delete_favorite(cipher_type):
     try:
-        from app import db, Favorite
         user_id = get_jwt_identity()
+        from app import db, Favorite
         fav = Favorite.query.filter_by(user_id=user_id, cipher_type=cipher_type).first()
         if not fav:
             return jsonify({'message':'Favorite not found'}), 404

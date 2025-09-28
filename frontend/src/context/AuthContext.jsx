@@ -17,14 +17,14 @@ export const AuthProvider = ({ children }) => {
 
   useEffect(() => {
     const token = localStorage.getItem('token')
-    const userData = localStorage.getItem('codecrypt_current_user')
+    const userData = localStorage.getItem('user')
     
     if (token && userData) {
       try {
         setUser(JSON.parse(userData))
       } catch (e) {
         localStorage.removeItem('token')
-        localStorage.removeItem('codecrypt_current_user')
+        localStorage.removeItem('user')
       }
     }
     setLoading(false)
@@ -35,7 +35,7 @@ export const AuthProvider = ({ children }) => {
       const response = await authService.login(email, password)
       setUser(response.user)
       localStorage.setItem('token', response.token)
-      localStorage.setItem('codecrypt_current_user', JSON.stringify(response.user))
+      localStorage.setItem('user', JSON.stringify(response.user))
       return response
     } catch (error) {
       const errorObj = new Error(error.message || 'Login failed')
@@ -49,7 +49,7 @@ export const AuthProvider = ({ children }) => {
       const response = await authService.register(username, email, password)
       setUser(response.user)
       localStorage.setItem('token', response.token)
-      localStorage.setItem('codecrypt_current_user', JSON.stringify(response.user))
+      localStorage.setItem('user', JSON.stringify(response.user))
       return response
     } catch (error) {
       const errorObj = new Error(error.message || 'Registration failed')
@@ -60,7 +60,7 @@ export const AuthProvider = ({ children }) => {
 
   const logout = () => {
     localStorage.removeItem('token')
-    localStorage.removeItem('codecrypt_current_user')
+    localStorage.removeItem('user')
     setUser(null)
   }
 

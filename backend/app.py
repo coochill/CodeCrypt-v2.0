@@ -5,6 +5,7 @@ from flask_jwt_extended import JWTManager
 from werkzeug.security import generate_password_hash
 import os
 from datetime import timedelta, datetime
+import traceback
 
 # Initialize Flask app
 app = Flask(__name__)
@@ -28,6 +29,29 @@ CORS(app, origins=[
     'http://localhost:3001',
     'http://localhost:5173'
 ])  # Allow React (Vite) frontend
+
+# --- Global error handling & request diagnostics (development aid) ---
+@app.before_request
+def _log_request_start():
+    if app.debug:
+        print(f"[REQ] {request.method} {request.path}")
+
+@app.errorhandler(Exception)
+def _unhandled_exception(e):
+    """Catch any unhandled exception and return JSON (helps surface 500 root causes)."""
+    # If it's an HTTPException, let Flask convert normally but still log.
+    code = getattr(e, 'code', 500)
+    if app.debug:
+        print('[ERR] Unhandled exception:', repr(e))
+        traceback.print_exc()
+    payload = {
+        'message': 'Internal server error' if code == 500 else str(e),
+        'error': type(e).__name__,
+    }
+    # Include the string form for quick visibility in debug mode
+    if app.debug:
+        payload['details'] = str(e)
+    return jsonify(payload), code
 
 # Define models directly here to avoid circular imports
 class User(db.Model):
@@ -150,7 +174,7 @@ def init_db():
 
 def create_admin_user():
     with app.app_context():
-        from models.user import User
+        # Use the User model defined in this file, not from models.user
         admin_email = os.environ.get('ADMIN_EMAIL', 'admin@codecrypt.com')
         admin = User.query.filter_by(email=admin_email).first()
         if not admin:
@@ -175,7 +199,7 @@ def api_info():
 
 if __name__ == '__main__':
     port = int(os.environ.get('PORT', 5000))
-    debug = os.environ.get('FLASK_DEBUG', 'false').lower() in ('1','true','yes')
+    debug = os.environ.get('FLASK_DEBUG', 'true').lower() in ('1','true','yes')
     with app.app_context():
         db.create_all()
         print('[DB] Tables ensured.')
@@ -187,4 +211,13 @@ if __name__ == '__main__':
                 print('Admin creation skipped:', e)
     print(f"Starting CodeCrypt API on port {port} | Debug={debug}")
     print('DB URL:', app.config['SQLALCHEMY_DATABASE_URI'])
-    app.run(host='0.0.0.0', port=port, debug=debug)
+    print('[RUN] Entering app.run ...', flush=True)
+    try:
+        # Disable threaded for now to rule out environment thread issues
+        app.run(host='0.0.0.0', port=port, debug=debug, use_reloader=False, threaded=False)
+    except Exception as run_err:
+        import traceback
+        print('[RUN] Exception in app.run:', run_err, flush=True)
+        traceback.print_exc()
+    finally:
+        print('[RUN] app.run exited (unexpected normal exit if no exception above).', flush=True)
