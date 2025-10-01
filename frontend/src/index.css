@@ -136,7 +136,11 @@
     cursor: pointer; user-select: none; font-weight: 500; color: #ffffff;
     transition: background-color .2s, color .2s;
   }
-  .legacy-nav-item:not(.active):hover { background: rgba(255,255,255,0.1); color:#fff; }
+  .legacy-sidebar.narrow .legacy-nav-item { justify-content: center; padding-left: 0.5rem; padding-right: 0.5rem; }
+  .legacy-sidebar.narrow .legacy-nav-icon { width: auto; }
+  .legacy-sidebar.narrow .legacy-nav-label { display: none; }
+  /* Disable hover visual change on nav items to keep sidebar appearance stable */
+  .legacy-nav-item:not(.active):hover { background: transparent; color: inherit; }
   .legacy-nav-item.active { background:#fff; color: var(--legacy-primary); box-shadow:0 4px 12px rgba(0,0,0,0.15); }
   .legacy-nav-icon { width:2.5rem; font-size:1.25rem; display:flex; align-items:center; justify-content:center; }
   .legacy-nav-label { white-space:nowrap; transition: opacity .2s; }
@@ -202,4 +206,53 @@
   @media (max-width: 768px) {
     .legacy-sidebar, .legacy-nav-item, .legacy-nav-label, .legacy-highlight { transition: none !important; }
   }
+
+  /* On very small screens, collapse the sidebar to icon-only instead of hiding it entirely */
+  @media (max-width: 420px) {
+    .legacy-sidebar { display: flex; width: 80px; }
+    .legacy-sidebar.narrow { width: 80px; }
+    .legacy-sidebar .legacy-nav-item { justify-content: center; padding-left: 0.5rem; padding-right: 0.5rem; }
+    .legacy-sidebar .legacy-nav-label { display: none; }
+    /* hide collapse toggle on very small screens since it's collapsed by default */
+    .legacy-sidebar .legacy-sidebar-toggle { display: none; }
+  }
+
+  /* Keep main content aligned as if sidebar were expanded even when it's collapsed.
+     This avoids visual shift and ensures cards remain in the same positions. */
+  .legacy-sidebar + .flex-1 {
+    position: relative;
+    z-index: 20;
+    transition: padding-left .25s ease;
+  }
+
+  /* When sidebar is narrow, apply the same left padding as expanded sidebar so layout doesn't shift */
+  /* When the sidebar is narrow, make it overlay the page and only leave a small safe gutter
+     so cards remain visually close to the left edge rather than being pushed far right. */
+  .legacy-sidebar.narrow {
+    position: fixed;
+    left: 0;
+    top: 0;
+    height: 100vh;
+    width: 80px;
+    z-index: 80; /* overlay above main content so sidebar remains interactive */
+  }
+
+  .legacy-sidebar.narrow + .flex-1 {
+    /* Keep the same left padding as when the sidebar is expanded so cards stay aligned */
+    padding-left: 256px;
+    z-index: 10; /* ensure main content is beneath the overlay while narrow */
+  }
+
+  /* Make the collapsed sidebar's background non-blocking so it doesn't intercept hover
+     events for the nearby cards; keep the clickable nav items and toggle active. */
+  .legacy-sidebar.narrow {
+    pointer-events: none;
+  }
+  .legacy-sidebar.narrow .legacy-nav-item,
+  .legacy-sidebar.narrow .legacy-sidebar-toggle,
+  .legacy-sidebar.narrow a,
+  .legacy-sidebar.narrow button {
+    pointer-events: auto;
+  }
+  /* hover-to-expand disabled: sidebar will not expand on hover */
 }
