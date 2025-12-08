@@ -10,6 +10,9 @@ import Profile from './pages/Profile'
 import Favorites from './pages/Favorites'
 import ProtectedRoute from './components/ProtectedRoute'
 import { AuthProvider } from './context/AuthContext'
+import AITutorWidget from './components/AITutorWidget'
+
+
 
 function AppContent() {
   const location = useLocation()
@@ -42,6 +45,7 @@ function AppContent() {
             <Route path="/favorites" element={<Favorites />} />
           </Routes>
         </main>
+        <AITutorWidget />
       </div>
     </div>
   )

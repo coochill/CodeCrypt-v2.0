@@ -1,6 +1,5 @@
 from flask import Blueprint, jsonify
 from flask_jwt_extended import jwt_required, get_jwt_identity
-from app import User
 
 game_bp = Blueprint('game', __name__)
 
@@ -8,6 +7,8 @@ game_bp = Blueprint('game', __name__)
 @jwt_required()
 def game_status():
     """Return placeholder info for game page"""
+    from app import User  # <-- 👈 Add this here
+
     user_id = get_jwt_identity()
     try:
         user_id = int(user_id)
@@ -18,7 +19,6 @@ def game_status():
     if not user:
         return jsonify({'message': 'User not found'}), 404
 
-    # Placeholder data
     return jsonify({
         'message': 'Game page connected',
         'user': user.to_dict(),
