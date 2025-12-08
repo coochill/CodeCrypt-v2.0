@@ -4,78 +4,77 @@
 @tailwind components;
 @tailwind utilities;
 
+/* ------------------------------ */
+/*            BASE                */
+/* ------------------------------ */
 @layer base {
   body {
     font-family: 'Poppins', theme('fontFamily.sans');
-    @apply bg-gray-50 text-gray-900 antialiased;
+    @apply bg-white text-gray-900 antialiased overflow-hidden; /* remove scrollbars */
   }
 }
 
+/* ------------------------------ */
+/*          COMPONENTS            */
+/* ------------------------------ */
 @layer components {
+  /* BUTTONS */
   .btn {
     @apply inline-flex items-center justify-center rounded-lg text-sm font-medium transition-all duration-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 focus-visible:ring-offset-2 disabled:opacity-50 disabled:pointer-events-none;
   }
-  
+
   .btn-primary {
     @apply btn bg-blue-600 text-white hover:bg-blue-700 hover:shadow-md px-6 py-2.5;
   }
-  
+
   .btn-secondary {
     @apply btn bg-gray-100 text-gray-700 hover:bg-gray-200 hover:shadow-sm border border-gray-200 px-6 py-2.5;
   }
-  
+
   .btn-danger {
     @apply btn bg-red-600 text-white hover:bg-red-700 hover:shadow-md px-6 py-2.5;
   }
-  
+
+  /* INPUTS */
   .input {
-    @apply flex h-11 w-full rounded-lg border border-gray-300 bg-white px-4 py-2.5 text-sm placeholder:text-gray-500 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 focus-visible:ring-offset-0 focus-visible:border-blue-500 transition-all duration-200 disabled:cursor-not-allowed disabled:opacity-50;
+    @apply flex h-11 w-full rounded-lg border border-gray-300 bg-white px-4 py-2.5 text-sm placeholder:text-gray-500 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 focus-visible:border-blue-500 transition-all duration-200 disabled:cursor-not-allowed disabled:opacity-50;
   }
-  
+
+  /* CARDS */
   .card {
     @apply rounded-xl border border-gray-200 bg-white shadow-sm hover:shadow-lg transition-all duration-300;
   }
-  
-  .card-header {
-    @apply flex flex-col space-y-1.5 p-6;
-  }
-  
-  .card-title {
-    @apply text-xl font-semibold leading-none tracking-tight text-gray-900;
-  }
-  
-  .card-description {
-    @apply text-sm text-gray-600 leading-relaxed;
-  }
-  
+
   .card-content {
     @apply p-6 pt-0;
   }
-  
+
+  /* CIPHER OUTPUT */
   .cipher-output {
     @apply font-mono text-sm bg-gray-50 p-4 rounded-lg border border-gray-200 min-h-[120px] whitespace-pre-wrap break-all resize-none focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all duration-200;
+    overflow: hidden; /* remove scrollbars */
   }
 
-  /* Custom scrollbar */
+  /* CUSTOM SCROLLBAR (if needed) */
   .custom-scrollbar::-webkit-scrollbar {
     width: 6px;
   }
-  
+
   .custom-scrollbar::-webkit-scrollbar-track {
     background: rgba(255, 255, 255, 0.1);
     border-radius: 3px;
   }
-  
+
   .custom-scrollbar::-webkit-scrollbar-thumb {
     background: rgba(255, 255, 255, 0.3);
     border-radius: 3px;
   }
-  
+
   .custom-scrollbar::-webkit-scrollbar-thumb:hover {
     background: rgba(255, 255, 255, 0.5);
   }
 
-  /* Line clamp utility */
+  /* TEXT UTILITIES */
   .line-clamp-2 {
     display: -webkit-box;
     -webkit-line-clamp: 2;
@@ -84,7 +83,6 @@
     overflow: hidden;
   }
 
-  /* Gradient text */
   .gradient-text {
     background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
     -webkit-background-clip: text;
@@ -92,14 +90,18 @@
     background-clip: text;
   }
 
-  /* ================= Legacy Aesthetic Layer ================= */
+  /* ------------------------------- */
+  /*         LEGACY AESTHETIC       */
+  /* ------------------------------- */
   :root {
     --legacy-primary: #005bea;
     --legacy-primary-dark: #0047b8;
     --legacy-accent: #2c3e50;
   }
 
-  /* Legacy sidebar style approximation */
+  /* ------------------------------- */
+  /*         LEGACY SIDEBAR          */
+  /* ------------------------------- */
   .legacy-sidebar {
     position: relative;
     display: flex;
@@ -108,45 +110,112 @@
     color: #fff;
     background: var(--legacy-primary);
     border-radius: 0 20px 20px 0;
-    width: 256px;
-    box-shadow: 0 10px 25px -5px rgba(0,0,0,0.1), 0 4px 6px -2px rgba(0,0,0,0.05);
+    width: 260px;
+   
     transition: all .3s ease-in-out;
+    overflow: hidden;
   }
-  .legacy-sidebar.narrow { width: 80px; }
+
+  .legacy-sidebar.narrow {
+    width: 80px;
+  }
 
   .legacy-sidebar-toggle {
     position: absolute;
-    right: -1rem;
-    top: 1.5rem;
-    width: 2rem; height: 2rem;
+    top: 1.25rem;
+    right: 0.2rem;
+    width: 1.75rem;
+    height: 1.75rem;
     border-radius: 9999px;
-    display: flex; align-items: center; justify-content: center;
+    display: flex;
+    align-items: center;
+    justify-content: center;
     cursor: pointer;
-    background: var(--legacy-primary-dark);
-    color: #fff; font-size: .875rem; font-weight: 600; 
-    box-shadow: 0 8px 20px rgba(0,0,0,0.25);
+    color: #fff;
+    font-size: 1.5rem;
+    font-weight: 800;
+    z-index: 999;
+    transition: all 0.3s ease;
   }
 
-  .legacy-nav-list { flex: 1; overflow-y: auto; overflow-x: hidden; position: relative; padding: 1rem 0.5rem 1rem 0; }
+  .legacy-sidebar.narrow .legacy-sidebar-toggle {
+    left: 50%;
+    right: auto;
+    transform: translateX(-50%);
+  }
+
+  .legacy-nav-list {
+    flex: 1;
+    overflow: hidden;
+    padding: 1rem 0 0.5rem 0;
+    margin-left: 1rem;
+    justify-content: center;
+  }
 
   .legacy-nav-item {
-    position: relative; display: flex; align-items: center; height: 3.5rem;
-    padding-left: 1.25rem; padding-right: 1rem;
-    border-top-left-radius: 1rem; border-bottom-left-radius: 1rem;
-    cursor: pointer; user-select: none; font-weight: 500; color: #ffffff;
+    display: flex;
+    align-items: center;
+    height: 2.5rem;
+    margin-bottom: 0.25rem;
+    border-top-left-radius: 0.75rem;
+    border-bottom-left-radius: 0.75rem;
+    font-size: 0.85rem;
+    font-weight: 500;
+    cursor: pointer;
+    user-select: none;
+    color: #ffffff;
     transition: background-color .2s, color .2s;
   }
-  .legacy-sidebar.narrow .legacy-nav-item { justify-content: center; padding-left: 0.5rem; padding-right: 0.5rem; }
-  .legacy-sidebar.narrow .legacy-nav-icon { width: auto; }
-  .legacy-sidebar.narrow .legacy-nav-label { display: none; }
-  /* Disable hover visual change on nav items to keep sidebar appearance stable */
-  .legacy-nav-item:not(.active):hover { background: transparent; color: inherit; }
-  .legacy-nav-item.active { background:#fff; color: var(--legacy-primary); box-shadow:0 4px 12px rgba(0,0,0,0.15); }
-  .legacy-nav-icon { width:2.5rem; font-size:1.25rem; display:flex; align-items:center; justify-content:center; }
-  .legacy-nav-label { white-space:nowrap; transition: opacity .2s; }
 
-  /* Animated highlight bar (optional) */
-  .legacy-highlight { position:absolute; left:0; width:100%; pointer-events:none; height:56px; transition: all .3s ease-in-out; }
+  .legacy-sidebar.narrow .legacy-nav-item {
+    justify-content: center;
+    padding-left: 0;
+    padding-right: 0;
+  }
+
+  .legacy-nav-icon {
+    width: 1.75rem;
+    font-size: 1rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-left: 1rem;
+  }
+
+  .legacy-sidebar.narrow .legacy-nav-icon {
+    margin-left: 0;
+  }
+
+  .legacy-nav-label {
+    white-space: nowrap;
+    margin-left: 0.25rem;
+    transition: opacity .25s;
+  }
+
+  .legacy-sidebar.narrow .legacy-nav-label {
+    display: none;
+  }
+
+  .legacy-nav-item.active {
+    background: #fff;
+    color: var(--legacy-primary);
+ 
+  }
+
+  .legacy-nav-item:not(.active):hover {
+    background: transparent;
+    color: inherit;
+  }
+
+  .legacy-highlight {
+    position: absolute;
+    left: 0;
+    width: 100%;
+    height: 48px;
+    pointer-events: none;
+    transition: all .3s ease-in-out;
+  }
+
   .legacy-highlight:before,
   .legacy-highlight:after {
     content: "";
@@ -157,34 +226,46 @@
     border-radius: 50%;
     background: #fff;
   }
+
   .legacy-highlight:before { top: -32px; box-shadow: 16px 16px #fff; }
   .legacy-highlight:after { bottom: -32px; box-shadow: 16px -16px #fff; }
 
-  /* Legacy card style (favorites & cipher list) */
-  .legacy-card-grid { display:grid; gap:1.5rem; grid-template-columns: repeat(auto-fill, minmax(320px, 1fr)); }
-  .legacy-card { position:relative; display:flex; align-items:center; padding:1.5rem; border-radius:0.75rem; border:1px solid var(--legacy-primary); background:#fff; overflow:hidden; cursor:pointer; transition: transform .3s ease; box-shadow:0 4px 12px rgba(0,0,0,0.15); }
-  .legacy-card:before {
-    content: "";
-    position: absolute;
-    top: -15px; right: -15px;
-    width: 25px; height: 220px;
-    background: var(--legacy-primary);
-    border-radius: 32px;
-    transform: scale(1);
-    transition: transform .25s ease-out;
-    z-index: 0;
+  /* ------------------------------- */
+  /*        LEGACY CARD GRID         */
+  /* ------------------------------- */
+  .legacy-card-grid {
+    display: grid;
+    padding: 0;   
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
   }
-  .legacy-card:hover:before { transform: scale(40); }
-  .legacy-card:hover { transform: translateY(-0.25rem); }
-  .legacy-card:hover .legacy-card-title, .legacy-card:hover .legacy-card-desc, .legacy-card:hover .legacy-card-icon { color:#fff; }
-  .legacy-card-icon { font-size:48px; margin-right:1rem; color: var(--legacy-primary); position:relative; z-index:10; }
-  .legacy-card-content { position:relative; z-index:10; }
-  /* NOTE: Tailwind @apply does not support arbitrary value color utilities inside @apply.
-    So we split them: use @apply for layout/typography and raw CSS for color. */
-  .legacy-card-title { font-size: 1.25rem; line-height: 1.75rem; font-weight: 600; margin-bottom: 0.25rem; color: var(--legacy-primary); }
-  .legacy-card-desc { font-size: 0.875rem; line-height: 1.25rem; color: var(--legacy-primary); opacity: 0.8; }
 
-  /* Favorites specific */
+  .legacy-card {
+    position: relative;
+    display: flex;
+    align-items: center;
+    padding: 1rem;
+    border-radius: 0.75rem;
+    border: 1px solid var(--legacy-primary);
+    background: #fff;
+    overflow: hidden;
+    cursor: pointer;
+    transition: transform .3s ease;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+    transform: scale(0.9); /* Zoom out */
+  }
+
+  .legacy-card:hover {
+    transform: scale(0.92) translateY(-0.25rem);
+  }
+
+  .legacy-card-icon { font-size: 48px; margin-right: 1rem; color: var(--legacy-primary); position: relative; z-index: 10; }
+  .legacy-card-content { position: relative; z-index: 10; }
+  .legacy-card-title { font-size: 1.25rem; font-weight: 600; margin-bottom: 0.25rem; color: var(--legacy-primary); }
+  .legacy-card-desc { font-size: 0.875rem; color: var(--legacy-primary); opacity: 100; }
+
+  /* ------------------------------- */
+  /*           SECTION LABEL         */
+  /* ------------------------------- */
   .legacy-section-title {
     display: inline-block;
     background: var(--legacy-primary);
@@ -192,67 +273,34 @@
     padding: 0.75rem 2rem;
     border-radius: 9999px;
     font-size: 1.5rem;
-    line-height: 2rem;
     font-weight: 600;
-    letter-spacing: .025em;
     box-shadow: 0 4px 10px rgba(0,0,0,0.15);
   }
 
-  /* Utility to hide label when collapsed */
-  .collapse-hide { opacity: 0; pointer-events: none; }
-  .collapse-show { opacity: 1; }
-
-  /* Smooth width/font transitions off on mobile to avoid jank */
+  /* ------------------------------- */
+  /*           MOBILE RULES          */
+  /* ------------------------------- */
   @media (max-width: 768px) {
-    .legacy-sidebar, .legacy-nav-item, .legacy-nav-label, .legacy-highlight { transition: none !important; }
+    .legacy-sidebar, .legacy-nav-item, .legacy-nav-label, .legacy-highlight {
+      transition: none !important;
+    }
   }
 
-  /* On very small screens, collapse the sidebar to icon-only instead of hiding it entirely */
   @media (max-width: 420px) {
-    .legacy-sidebar { display: flex; width: 80px; }
-    .legacy-sidebar.narrow { width: 80px; }
-    .legacy-sidebar .legacy-nav-item { justify-content: center; padding-left: 0.5rem; padding-right: 0.5rem; }
-    .legacy-sidebar .legacy-nav-label { display: none; }
-    /* hide collapse toggle on very small screens since it's collapsed by default */
-    .legacy-sidebar .legacy-sidebar-toggle { display: none; }
+    .legacy-sidebar { width: 80px; }
+    .legacy-sidebar-toggle { display: none; }
+    .legacy-nav-item { justify-content: center; padding-left: 0.5rem; padding-right: 0.5rem; }
+    .legacy-nav-label { display: none; }
   }
 
-  /* Keep main content aligned as if sidebar were expanded even when it's collapsed.
-     This avoids visual shift and ensures cards remain in the same positions. */
-  .legacy-sidebar + .flex-1 {
-    position: relative;
-    z-index: 20;
-    transition: padding-left .25s ease;
-  }
-
-  /* When sidebar is narrow, apply the same left padding as expanded sidebar so layout doesn't shift */
-  /* When the sidebar is narrow, make it overlay the page and only leave a small safe gutter
-     so cards remain visually close to the left edge rather than being pushed far right. */
-  .legacy-sidebar.narrow {
-    position: fixed;
-    left: 0;
-    top: 0;
-    height: 100vh;
-    width: 80px;
-    z-index: 80; /* overlay above main content so sidebar remains interactive */
-  }
-
-  .legacy-sidebar.narrow + .flex-1 {
-    /* Keep the same left padding as when the sidebar is expanded so cards stay aligned */
-    padding-left: 256px;
-    z-index: 10; /* ensure main content is beneath the overlay while narrow */
-  }
-
-  /* Make the collapsed sidebar's background non-blocking so it doesn't intercept hover
-     events for the nearby cards; keep the clickable nav items and toggle active. */
-  .legacy-sidebar.narrow {
-    pointer-events: none;
-  }
+  /* ------------------------------- */
+  /*     CONTENT ALIGNMENT FIXES     */
+  /* ------------------------------- */
+  .legacy-sidebar + .flex-1 { position: relative; z-index: 20; transition: padding-left .25s ease; }
+  .legacy-sidebar.narrow { position: fixed; left: 0; top: 0; height: 100vh; width: 80px; z-index: 80; pointer-events: none; }
+  .legacy-sidebar.narrow + .flex-1 { padding-left: 256px; }
   .legacy-sidebar.narrow .legacy-nav-item,
   .legacy-sidebar.narrow .legacy-sidebar-toggle,
   .legacy-sidebar.narrow a,
-  .legacy-sidebar.narrow button {
-    pointer-events: auto;
-  }
-  /* hover-to-expand disabled: sidebar will not expand on hover */
+  .legacy-sidebar.narrow button { pointer-events: auto; }
 }

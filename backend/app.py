@@ -153,11 +153,13 @@ class Favorite(db.Model):
 from routes.auth import auth_bp
 from routes.cipher import cipher_bp
 from routes.favorites import favorites_bp
+from routes.game import game_bp
 
 # Register blueprints
 app.register_blueprint(auth_bp, url_prefix='/api/auth')
 app.register_blueprint(cipher_bp, url_prefix='/api/cipher')
 app.register_blueprint(favorites_bp, url_prefix='/api/favorites')
+app.register_blueprint(game_bp, url_prefix='/api/game')
 
 @app.route('/api/health', methods=['GET'])
 def health_check():

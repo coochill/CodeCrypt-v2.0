@@ -16,53 +16,74 @@ const TopBar = () => {
   }
 
   return (
-    <div className="bg-white border-b border-gray-200 px-6 py-4">
-      <div className="flex items-center justify-between">
-        {/* Greeting */}
-        <div>
-          <h1 className="text-2xl font-bold text-gray-900">
+    <div className="w-full">
+
+      {/* Header Bar */}
+      <div className="px-6 py-4 bg-transparent">
+        <div className="flex items-center justify-between">
+
+          {/* Left side empty */}
+          <div></div>
+
+          {/* User Details */}
+          <div className="flex items-center space-x-4">
             {user ? (
               <>
-                Hi, {user.username}! What do you want to convert today?
+                <div className="text-right">
+                  <p className="text-xs text-gray-600">Welcome back!</p>
+                  <p className="text-xs font-medium text-gray-900">{user.email}</p>
+                </div>
+
+                <button
+                  onClick={handleLogout}
+                  className="bg-blue-600 text-white text-sm px-5 py-2 rounded-full font-medium hover:bg-blue-700 transition"
+                >
+                  Logout
+                </button>
               </>
             ) : (
-              <>
-                {getGreeting()}! What do you want to convert today?
-              </>
-            )}
-          </h1>
-          <p className="text-gray-600 mt-1">
-            Choose a cipher from the sidebar to get started with encoding and decoding.
-          </p>
-        </div>
+              <div className="flex items-center space-x-2">
+                <Link
+                  to="/login"
+                  className="bg-gray-300 text-gray-900 text-sm px-5 py-2 rounded-full font-medium hover:bg-gray-400 transition"
+                >
+                  Login
+                </Link>
 
-        {/* User Actions */}
-        <div className="flex items-center space-x-4">
-          {user ? (
-            <>
-              <div className="text-right">
-                <p className="text-sm text-gray-600">Welcome back!</p>
-                <p className="text-sm font-medium text-gray-900">{user.email}</p>
+                <Link
+                  to="/register"
+                  className="bg-blue-600 text-white text-sm px-5 py-2 rounded-full font-medium hover:bg-blue-700 transition"
+                >
+                  Sign Up
+                </Link>
               </div>
-              <button
-                onClick={handleLogout}
-                className="btn btn-secondary"
-              >
-                Logout
-              </button>
-            </>
+            )}
+          </div>
+        </div>
+      </div>
+
+      {/* Floating Greeting — CENTERED BELOW HEADER */}
+      <div className="flex justify-start mt-4 px-40">
+        <div
+          className="
+            bg-blue-600 
+            text-white 
+            px-5 
+            py-2 
+            rounded-full 
+            shadow-md 
+            text-sm 
+            font-semibold
+          "
+        >
+          {user ? (
+            <>Hi, {user.username}! What do you want to convert today?</>
           ) : (
-            <div className="flex items-center space-x-2">
-              <Link to="/login" className="btn btn-secondary">
-                Login
-              </Link>
-              <Link to="/register" className="btn btn-primary">
-                Sign Up
-              </Link>
-            </div>
+            <>{getGreeting()}! What do you want to convert today?</>
           )}
         </div>
       </div>
+
     </div>
   )
 }
