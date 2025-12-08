@@ -1,5 +1,6 @@
 // src/components/AITutorWidget.jsx
 import { useState } from "react";
+import { FaRobot } from "react-icons/fa";
 import { toolsFaq } from "../data/aiTutorData";
 
 function AITutorWidget() {
@@ -52,12 +53,19 @@ function AITutorWidget() {
   return (
     <>
       {/* Floating Button */}
-      <button
-        onClick={() => setIsOpen((o) => !o)}
-        className="fixed bottom-6 right-6 z-40 rounded-full shadow-lg px-4 py-3 text-white bg-blue-600 hover:bg-blue-700 transition"
-      >
-        {isOpen ? "Close Tutor" : "AI Tutor"}
-      </button>
+      <div className="fixed bottom-6 right-6 z-40 group">
+        <button
+          onClick={() => setIsOpen((o) => !o)}
+          className="rounded-full shadow-lg p-4 text-white bg-blue-600 hover:bg-blue-700 flex items-center justify-center transition"
+        >
+          <FaRobot className="w-6 h-6" />
+        </button>
+
+      {/* Tooltip */}
+        <span className="absolute bottom-full mb-2 hidden group-hover:block bg-gray-800 text-white text-xs rounded px-2 py-1 whitespace-nowrap">
+          {isOpen ? "Close Tutor" : "Open AI Tutor"}
+        </span>
+      </div>
 
       {/* Chat Panel */}
       {isOpen && (
