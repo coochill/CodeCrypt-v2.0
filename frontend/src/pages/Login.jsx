@@ -27,12 +27,10 @@ const Login = () => {
     setLoading(true)
 
     try {
-      // Mock login for demo
-      await new Promise(resolve => setTimeout(resolve, 1000))
-      console.log("Login successful")
+      await login(formData.email, formData.password)
       navigate('/')
     } catch (err) {
-      setError(err.response?.data?.message || 'Login failed. Please try again.')
+      setError(err.response?.data?.message || err.message || 'Login failed. Please try again.')
     } finally {
       setLoading(false)
     }

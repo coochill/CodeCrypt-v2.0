@@ -20,10 +20,12 @@ def game_status():
     from app import User  # <-- 👈 Add this here
 
     user_id = get_jwt_identity()
+    if user_id is None:
+        return jsonify({'message': 'Invalid token subject (missing identity)'}), 401
     try:
         user_id = int(user_id)
     except (TypeError, ValueError):
-        return jsonify({'message': 'Invalid token subject'}), 422
+        return jsonify({'message': 'Invalid token subject (must be numeric)'}), 401
 
     user = User.query.get(user_id)
     if not user:

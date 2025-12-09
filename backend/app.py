@@ -53,6 +53,26 @@ def _unhandled_exception(e):
         payload['details'] = str(e)
     return jsonify(payload), code
 
+
+@jwt.unauthorized_loader
+def _jwt_missing_token(reason):
+    return jsonify({'message': 'Missing authorization token', 'error': reason}), 401
+
+
+@jwt.invalid_token_loader
+def _jwt_invalid_token(reason):
+    return jsonify({'message': 'Invalid authorization token', 'error': reason}), 401
+
+
+@jwt.expired_token_loader
+def _jwt_expired_token(jwt_header, jwt_payload):
+    return jsonify({'message': 'Token has expired', 'error': 'expired_token'}), 401
+
+
+@jwt.revoked_token_loader
+def _jwt_revoked_token(jwt_header, jwt_payload):
+    return jsonify({'message': 'Token has been revoked', 'error': 'revoked_token'}), 401
+
 # Define models directly here to avoid circular imports
 class User(db.Model):
     """User model for authentication and user management"""
