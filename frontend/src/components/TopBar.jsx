@@ -66,30 +66,33 @@ const TopBar = () => {
         </div>
       </div>
 
-      {/* Floating Greeting — CENTERED BELOW HEADER */}
-      <div className="flex justify-start mt-8 ml-24">
-        <div
-          className="
-            bg-blue-600 
-            text-white 
-            px-5 
-            py-2 
-            rounded-full 
-            shadow-md 
-            text-sm 
-            font-semibold
-          "
-        >
-          {user ? (
-            <>Hi, {user.username}! What do you want to convert today?</>
-          ) : (
-            <>{getGreeting()}! What do you want to convert today?</>
-          )}
-        </div>
+       {/* Floating Greeting — CENTERED BELOW HEADER */}
+      <div className="flex justify-start mt-4 px-40">
+        {(isMineCipherPage || isHomePage) && (
+          <div
+            className="
+              bg-blue-600 
+              text-white 
+              px-5 
+              py-2 
+              rounded-full 
+              shadow-md 
+              text-sm 
+              font-semibold
+            "
+          >
+            {isMineCipherPage ? (
+              <>Challenge your decoding skills with MineCipher game</>
+            ) : user ? (
+              <>Hi, {user.username}! What do you want to convert today?</>
+            ) : (
+              <>{getGreeting()}! What do you want to convert today?</>
+            )}
+          </div>
+        )}
       </div>
 
     </div>
   )
 }
-
 export default TopBar
