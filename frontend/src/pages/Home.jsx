@@ -76,24 +76,28 @@ const Home = () => {
     }
   }
 
-  const getCipherIcon = (cipherType) => {
+    const getCipherIcon = (cipherType) => {
+    const cls = "w-12 h-8"; 
+
     const icons = {
-      affine: <FaBarsStaggered />,
-      atbash: <FaArrowLeft />,
-      base64: <FaCode />,
-      binary: <FaCircle />,
-      caesar: <FaAsterisk />,
-      hex: <FaHashtag />,
-      morse: <FaWaveSquare />,
-      rail_fence: <FaRandom />,
-      rot13: <FaSync />,
-      vigenere: <FaFont />,
-      favorites: <FaHeart />,
-      history: <FaClockRotateLeft />,
-      default: <FaUndo />
+      affine: <FaBarsStaggered className={cls} />,
+      atbash: <FaArrowLeft className={cls} />,
+      base64: <FaCode className={cls} />,
+      binary: <FaCircle className={cls} />,
+      caesar: <FaAsterisk className={cls} />,
+      hex: <FaHashtag className={cls} />,
+      morse: <FaWaveSquare className={cls} />,
+      rail_fence: <FaRandom className={cls} />,
+      rot13: <FaSync className={cls} />,
+      vigenere: <FaFont className={cls} />,
+      favorites: <FaHeart className={cls} />,
+      history: <FaClockRotateLeft className={cls} />,
+      default: <FaUndo className={cls} />
     }
+
     return icons[cipherType] || icons.default
   }
+
 
   const cipherCards = Object.entries(CIPHERS).map(([key, cipher]) => {
     const iconElement = getCipherIcon(key)
@@ -115,7 +119,11 @@ const Home = () => {
             aria-label={favoritesSet.has(key) ? 'Remove favorite' : 'Add favorite'}
             className="p-1 rounded text-gray-800 hover:text-red-500 transition-colors duration-200"
           >
-            <FaHeart className="w-5 h-5" />
+            <FaHeart
+              className={`w-5 h-5 ${
+                favoritesSet.has(key) ? 'text-red-500' : 'text-gray-400'
+              }`}
+            />
           </button>
         </div>
 
