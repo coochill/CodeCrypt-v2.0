@@ -121,7 +121,11 @@ const Home = () => {
             aria-label={favoritesSet.has(key) ? 'Remove favorite' : 'Add favorite'}
             className="p-1 rounded text-gray-800 hover:text-red-500 transition-colors duration-200"
           >
-            <FaHeart className="w-5 h-5" />
+            <FaHeart
+              className={`w-5 h-5 ${
+                favoritesSet.has(key) ? 'text-red-500' : 'text-gray-400'
+              }`}
+            />
           </button>
         </div>
 
