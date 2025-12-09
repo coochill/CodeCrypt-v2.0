@@ -63,7 +63,7 @@ const TopBar = () => {
       </div>
 
       {/* Floating Greeting — CENTERED BELOW HEADER */}
-      <div className="flex justify-start mt-4 px-40">
+      <div className="flex justify-start mt-8 ml-24">
         <div
           className="
             bg-blue-600 
