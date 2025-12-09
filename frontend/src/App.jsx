@@ -43,7 +43,9 @@ function AppContent() {
             <Route path="/" element={<Home />} />
             <Route path="/cipher/:type" element={<CipherPage />} />
             <Route path="/game/minecipher" element={<ProtectedRoute><Game /></ProtectedRoute>} />
-            <Route path="/profile" element={<ProtectedRoute><Profile /></ProtectedRoute>} />
+              <Route path="/profile" element={<ProtectedRoute><Profile /></ProtectedRoute>} />
+              <Route path="/settings" element={<ProtectedRoute><Profile defaultTab="profile" /></ProtectedRoute>} />
+            <Route path="/history" element={<ProtectedRoute><Profile defaultTab="history" /></ProtectedRoute>} />
             <Route path="/favorites" element={<Favorites />} />
           </Routes>
         </main>

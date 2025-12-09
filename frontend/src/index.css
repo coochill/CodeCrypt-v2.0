@@ -103,7 +103,7 @@
   /*         LEGACY SIDEBAR          */
   /* ------------------------------- */
   .legacy-sidebar {
-    position: relative;
+    position: sticky;
     display: flex;
     flex-direction: column;
     height: 100vh;
@@ -114,6 +114,9 @@
    
     transition: all .3s ease-in-out;
     overflow: hidden;
+    top: 0;
+    align-self: flex-start;
+    z-index: 50;
   }
 
   .legacy-sidebar.narrow {

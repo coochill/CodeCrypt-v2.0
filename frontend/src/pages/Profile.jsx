@@ -4,9 +4,9 @@ import { cipherService } from '../services/cipherService'
 import { authService } from '../services/authService'
 import { Navigate } from 'react-router-dom'
 
-const Profile = () => {
+const Profile = ({ defaultTab = 'profile' }) => {
   const { user, logout } = useAuth()
-  const [activeTab, setActiveTab] = useState('profile')
+  const [activeTab, setActiveTab] = useState(defaultTab)
   const [history, setHistory] = useState([])
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState('')
@@ -39,6 +39,10 @@ const Profile = () => {
       fetchHistory()
     }
   }, [activeTab, user])
+
+  useEffect(() => {
+    setActiveTab(defaultTab)
+  }, [defaultTab])
 
   if (!user) {
     return <Navigate to="/login" />

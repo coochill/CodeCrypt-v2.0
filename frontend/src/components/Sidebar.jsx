@@ -3,9 +3,9 @@ import { CIPHERS } from '../services/cipherService';
 import { useState, useEffect } from 'react';
 import { 
   FaArrowLeft, FaCode, FaCircle, FaAsterisk, FaHashtag, FaWaveSquare, 
-  FaRandom, FaSync, FaFont, FaUndo 
+  FaRandom, FaSync, FaFont, FaUndo, FaCog 
 } from "react-icons/fa";
-import { FaBarsStaggered, FaHeart, FaClockRotateLeft } from "react-icons/fa6";
+import { FaBarsStaggered, FaHeart } from "react-icons/fa6";
 import logo from '../images/logo2.png';
 
 const Sidebar = () => {
@@ -60,7 +60,7 @@ const Sidebar = () => {
       rot13: <FaSync color={color} />,
       vigenere: <FaFont color={color} />,
       favorites: <FaHeart color={color} />,
-      history: <FaClockRotateLeft color={color} />,
+      settings: <FaCog color={color} />,
       default: <FaUndo color={color} />
     };
     return icons[cipherType] || icons.default;
@@ -125,14 +125,14 @@ const Sidebar = () => {
               </span>
             </Link>
 
-            <Link to="/history" className={`legacy-nav-item ${isActive('/history') ? 'active' : ''}`}>
-              <span className="legacy-nav-icon">{getCipherIcon('history', isActive('/history'))}</span>
+            <Link to="/settings" className={`legacy-nav-item ${isActive('/settings') ? 'active' : ''}`}>
+              <span className="legacy-nav-icon">{getCipherIcon('settings', isActive('/settings'))}</span>
               <span
                 className={`legacy-nav-label transition-all duration-300 ${
                   collapsed ? 'opacity-0 w-0 overflow-hidden' : 'opacity-100'
                 }`}
               >
-                History
+                Settings
               </span>
             </Link>
           </nav>

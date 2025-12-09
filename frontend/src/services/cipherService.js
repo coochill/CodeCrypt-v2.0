@@ -37,9 +37,16 @@ const apiCall = async (endpoint, options = {}) => {
 
 export const cipherService = {
   async encodeText(cipherType, text, key = null) {
+    const recordHistory = (result, recordKey) => {
+      this.saveToHistory(cipherType, 'encode', text, result, recordKey);
+    };
+
     try {
-      // First try backend API
       const token = localStorage.getItem('token');
+      const processedKey = cipherAlgorithms[cipherType]?.keyType === 'number' && key !== null
+        ? Number(key)
+        : key;
+
       if (token) {
         try {
           const response = await apiCall('/cipher/encode', {
@@ -47,25 +54,24 @@ export const cipherService = {
             body: JSON.stringify({ 
               text, 
               cipher_type: cipherType, 
-              key 
+              key: processedKey 
             }),
           });
+          recordHistory(response.result, processedKey);
           return { result: response.result };
         } catch (apiError) {
           console.warn('Backend API failed, falling back to client-side:', apiError);
         }
       }
 
-      // Fallback to client-side cipher algorithms
       const algorithm = cipherAlgorithms[cipherType];
       if (!algorithm) {
         throw new Error(`Cipher type "${cipherType}" not supported`);
       }
       
-      const result = algorithm.encode(text, key);
+      const result = algorithm.encode(text, processedKey);
       
-      // Save to local history
-      this.saveToHistory(cipherType, 'encode', text, result, key);
+      recordHistory(result, processedKey);
       
       return { result };
     } catch (error) {
@@ -74,9 +80,16 @@ export const cipherService = {
   },
 
   async decodeText(cipherType, text, key = null) {
+    const recordHistory = (result, recordKey) => {
+      this.saveToHistory(cipherType, 'decode', text, result, recordKey);
+    };
+
     try {
-      // First try backend API
       const token = localStorage.getItem('token');
+      const processedKey = cipherAlgorithms[cipherType]?.keyType === 'number' && key !== null
+        ? Number(key)
+        : key;
+
       if (token) {
         try {
           const response = await apiCall('/cipher/decode', {
@@ -84,29 +97,28 @@ export const cipherService = {
             body: JSON.stringify({ 
               text, 
               cipher_type: cipherType, 
-              key 
+              key: processedKey 
             }),
           });
+          recordHistory(response.result, processedKey);
           return { result: response.result };
         } catch (apiError) {
           console.warn('Backend API failed, falling back to client-side:', apiError);
         }
       }
 
-      // Fallback to client-side cipher algorithms
       const algorithm = cipherAlgorithms[cipherType];
       if (!algorithm) {
         throw new Error(`Cipher type "${cipherType}" not supported`);
       }
       
-      const result = algorithm.decode(text, key);
+      const result = algorithm.decode(text, processedKey);
       
-      // Save to local history
-      this.saveToHistory(cipherType, 'decode', text, result, key);
+      recordHistory(result, processedKey);
       
       return { result };
     } catch (error) {
-      throw new Error(error.message || 'Decoding failed');
+      throw new Error(error.message || `Decoding failed`);
     }
   },
 
