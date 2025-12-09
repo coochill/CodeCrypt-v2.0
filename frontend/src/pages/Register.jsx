@@ -68,7 +68,7 @@ const Register = () => {
           )}
           
           <form onSubmit={handleSubmit} className="space-y-5">
-            <div>
+            <div className="pt-7">
               <label htmlFor="username" className="block text-sm font-medium text-gray-700 mb-2">
                 Username
               </label>
