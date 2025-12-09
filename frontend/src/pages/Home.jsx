@@ -12,9 +12,8 @@ const Home = () => {
   const { user } = useAuth()
   const [favoritesSet, setFavoritesSet] = useState(new Set())
   const [error, setError] = useState('')
-  const [backendTest, setBackendTest] = useState(null) // temporary state
+  const [backendTest, setBackendTest] = useState(null)
 
-  // Load favorites
   useEffect(() => {
     const load = async () => {
       if (!user) return setFavoritesSet(new Set())
@@ -30,7 +29,6 @@ const Home = () => {
     load()
   }, [user])
 
-  // TEMP: Test backend connection
   useEffect(() => {
     const testBackend = async () => {
       try {
@@ -74,7 +72,7 @@ const Home = () => {
     } catch (err) {
       console.error('Favorite toggle failed:', err)
       setError(err.message || 'Favorite action failed')
-      setFavoritesSet(new Set(favoritesSet)) // rollback
+      setFavoritesSet(new Set(favoritesSet))
     }
   }
 
@@ -153,14 +151,12 @@ const Home = () => {
 
   return (
     <div className="px-16 mx-auto w-full">
-
-      {/* BUTTON to Minesweeper page */}
       <div className="text-center mb-6">
         <Link
-          to="/game/minesweeper"
+          to="/game/minecipher"
           className="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700 transition-colors"
         >
-          Play Minesweeper
+          Play Minecipher
         </Link>
       </div>
 

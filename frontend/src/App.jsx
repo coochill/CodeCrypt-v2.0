@@ -8,6 +8,7 @@ import Register from './pages/Register'
 import CipherPage from './pages/CipherPage'
 import Profile from './pages/Profile'
 import Favorites from './pages/Favorites'
+import Game from './pages/Game'
 import ProtectedRoute from './components/ProtectedRoute'
 import { AuthProvider } from './context/AuthContext'
 import AITutorWidget from './components/AITutorWidget'
@@ -37,10 +38,11 @@ function AppContent() {
       {/* Main Content */}
       <div className="flex-1 flex flex-col">
         <TopBar />
-        <main className="flex-1 p-6">
+        <main className="flex-1 p-6 overflow-y-auto">
           <Routes>
             <Route path="/" element={<Home />} />
             <Route path="/cipher/:type" element={<CipherPage />} />
+            <Route path="/game/minecipher" element={<ProtectedRoute><Game /></ProtectedRoute>} />
             <Route path="/profile" element={<ProtectedRoute><Profile /></ProtectedRoute>} />
             <Route path="/favorites" element={<Favorites />} />
           </Routes>

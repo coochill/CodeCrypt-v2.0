@@ -1,5 +1,5 @@
 import { useAuth } from '../context/AuthContext'
-import { Link } from 'react-router-dom'
+import { Link, useLocation } from 'react-router-dom'
 
 const TopBar = () => {
   const { user, logout } = useAuth()
@@ -11,9 +11,12 @@ const TopBar = () => {
     return 'Good evening'
   }
 
+  const location = useLocation()
   const handleLogout = () => {
     logout()
   }
+
+  const isMineCipherPage = location.pathname.startsWith('/game')
 
   return (
     <div className="w-full">
@@ -64,24 +67,26 @@ const TopBar = () => {
 
       {/* Floating Greeting — CENTERED BELOW HEADER */}
       <div className="flex justify-start mt-4 px-40">
-        <div
-          className="
-            bg-blue-600 
-            text-white 
-            px-5 
-            py-2 
-            rounded-full 
-            shadow-md 
-            text-sm 
-            font-semibold
-          "
-        >
-          {user ? (
-            <>Hi, {user.username}! What do you want to convert today?</>
-          ) : (
-            <>{getGreeting()}! What do you want to convert today?</>
-          )}
-        </div>
+          <div
+            className="
+              bg-blue-600 
+              text-white 
+              px-5 
+              py-2 
+              rounded-full 
+              shadow-md 
+              text-sm 
+              font-semibold
+            "
+          >
+            {isMineCipherPage ? (
+              <>Challenge your decoding skills with MineCipher game</>
+            ) : user ? (
+              <>Hi, {user.username}! What do you want to convert today?</>
+            ) : (
+              <>{getGreeting()}! What do you want to convert today?</>
+            )}
+          </div>
       </div>
 
     </div>

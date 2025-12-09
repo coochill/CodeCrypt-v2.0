@@ -10,7 +10,7 @@
 @layer base {
   body {
     font-family: 'Poppins', theme('fontFamily.sans');
-    @apply bg-white text-gray-900 antialiased overflow-hidden; /* remove scrollbars */
+    @apply bg-white text-gray-900 antialiased overflow-x-hidden; /* remove horizontal scroll */
   }
 }
 
