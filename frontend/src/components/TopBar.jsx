@@ -17,6 +17,7 @@ const TopBar = () => {
   }
 
   const isMineCipherPage = location.pathname.startsWith('/game')
+  const isHomePage = location.pathname === '/'
 
   return (
     <div className="w-full">
@@ -67,6 +68,7 @@ const TopBar = () => {
 
       {/* Floating Greeting — CENTERED BELOW HEADER */}
       <div className="flex justify-start mt-4 px-40">
+        {(isMineCipherPage || isHomePage) && (
           <div
             className="
               bg-blue-600 
@@ -87,6 +89,7 @@ const TopBar = () => {
               <>{getGreeting()}! What do you want to convert today?</>
             )}
           </div>
+        )}
       </div>
 
     </div>
