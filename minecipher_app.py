@@ -2,6 +2,11 @@ import random
 import tkinter as tk
 from tkinter import messagebox
 
+try:
+    from wordfreq import top_n_list
+except ImportError:
+    top_n_list = None
+
 
 class MineCipherApp:
     def __init__(self):
@@ -11,41 +16,17 @@ class MineCipherApp:
         self.root.configure(bg="#EDF5FF")
         self.root.resizable(False, False)
 
-        self.word_bank = [
-            "APPLE",
-            "BRAVO",
-            "DELTA",
-            "FROST",
-            "GAMMA",
-            "HONEY",
-            "IRONY",
-            "JAZZY",
-            "KNIFE",
-            "ORBIT",
-            "LEMON",
-            "MANGO",
-            "NINJA",
-            "OPERA",
-            "PIXEL",
-            "QUAKE",
-            "QUEST",
-            "RIVER",
-            "SOLAR",
-            "SWEET",
-            "TABLE",
-            "TIDES",
-            "UNITY",
-            "VIVID",
-            "WISER",
-            "XENON",
-            "YIELD",
-            "ZESTY",
-        ]
+        self.word_bank = self.build_word_bank()
 
         self.difficulty_presets = {
             "Easy": (6, 15),
             "Medium": (10, 25),
             "Hard": (14, 35),
+        }
+        self.difficulty_word_length = {
+            "Easy": 5,
+            "Medium": 6,
+            "Hard": 7,
         }
         self.selected_difficulty = "Medium"
         self.cipher_names = [
@@ -63,7 +44,7 @@ class MineCipherApp:
             "Caesar Cipher": "Caesar shifts by +3. HELLO becomes KHOOR; decoding shifts letters by -3 to get the original word.",
             "Rail Fence Cipher": "Rail Fence with depth 3 writes HELLO as HOELL when read row-wise; decoding re-interleaves the rows to reconstruct HELLO.",
             "ROT13 Cipher": "ROT13 rotates each letter by 13 places. HELLO → URYYB; applying ROT13 again returns the original.",
-            "Vigenère Cipher": "Vigenère with key MINE shifts letters by key letters. Using key MINE, HELLO → SLOSP; decode by reversing each shift with the key.",
+            "Vigenère Cipher": "Vigenère with key MINE shifts letters by key letters. Using key MINE, HELLO → TMYPA; decode by reversing each shift with the key.",
         }
 
         self.max_guesses = 5
@@ -82,6 +63,72 @@ class MineCipherApp:
         for f in (self.home_frame, self.selection_frame, self.game_frame):
             f.pack_forget()
         frame.pack(fill="both", expand=True)
+
+    def build_word_bank(self):
+        desired_lengths = {5, 6, 7}
+        buckets = {length: [] for length in desired_lengths}
+        if top_n_list:
+            for word in top_n_list("en", 12000):
+                upper = word.upper()
+                length = len(upper)
+                if length in buckets and upper.isalpha():
+                    buckets[length].append(upper)
+        fallback = {
+            5: [
+                "APPLE",
+                "BRAVO",
+                "DELTA",
+                "FROST",
+                "GAMMA",
+                "HONEY",
+                "IRONY",
+                "JAZZY",
+                "KNIFE",
+                "ORBIT",
+                "LEMON",
+                "MANGO",
+                "NINJA",
+                "OPERA",
+                "PIXEL",
+                "QUEST",
+                "RIVER",
+                "SOLAR",
+                "SWEET",
+                "TABLE",
+                "TIDES",
+                "UNITY",
+                "VIVID",
+                "WISER",
+                "XENON",
+                "YIELD",
+                "ZESTY",
+            ],
+            6: [
+                "ORCHID",
+                "FATHER",
+                "PLANET",
+                "SILVER",
+                "RHYTHM",
+                "FLOWER",
+                "CIRCLE",
+                "MYSTIC",
+                "SPRING",
+                "CRIMES",
+            ],
+            7: [
+                "LIBERTY",
+                "VOYAGER",
+                "MYSTERY",
+                "CRYSTAL",
+                "HELIXES",
+                "WEATHER",
+                "JOURNEY",
+            ],
+        }
+        for length in desired_lengths:
+            combined = list(dict.fromkeys(buckets[length] + fallback.get(length, [])))
+            buckets[length] = combined
+        return buckets
 
     def build_home_screen(self):
         header = tk.Label(
@@ -196,11 +243,30 @@ class MineCipherApp:
     def build_game_interface(self):
         board_panel = tk.Frame(self.game_frame, bg="#EDF5FF")
         board_panel.grid(row=0, column=0, padx=20, pady=20)
-        self.board_frame = tk.Frame(board_panel, bg="#DDE7FF")
-        self.board_frame.pack(padx=10, pady=10)
+        self.board_canvas = tk.Canvas(
+            board_panel,
+            width=760,
+            height=520,
+            bg="#DDE7FF",
+            highlightthickness=0,
+        )
+        self.board_canvas.grid(row=0, column=0)
+        self.board_scroll = tk.Scrollbar(
+            board_panel, orient="horizontal", command=self.board_canvas.xview
+        )
+        self.board_scroll.grid(row=1, column=0, sticky="ew")
+        self.board_canvas.configure(xscrollcommand=self.board_scroll.set)
+        self.board_frame = tk.Frame(self.board_canvas, bg="#DDE7FF")
+        self.board_canvas.create_window((0, 0), window=self.board_frame, anchor="nw")
+        self.board_frame.bind(
+            "<Configure>",
+            lambda event: self.board_canvas.configure(
+                scrollregion=self.board_canvas.bbox("all")
+            ),
+        )
 
         control_panel = tk.Frame(board_panel, bg="#EDF5FF")
-        control_panel.pack(pady=(10, 0))
+        control_panel.grid(row=1, column=0, pady=(10, 0))
         new_board_btn = tk.Button(
             control_panel,
             text="New Board",
@@ -355,16 +421,21 @@ class MineCipherApp:
         self.flagged_cells = set()
         self.revealed_cipher_positions = set()
 
-        self.target_word = random.choice(self.word_bank).upper()
+        word_length = self.difficulty_word_length.get(self.selected_difficulty, 5)
+        candidates = self.word_bank.get(word_length, [])
+        if not candidates:
+            # fallback to 5-letter words if desired length missing
+            candidates = self.word_bank.get(5, [])
+        self.target_word = random.choice(candidates).upper()
         self.cipher_word = self.apply_cipher(self.target_word, self.selected_cipher)
         self.cell_cipher_letters = {}
         positions_for_letters = random.sample(safe_positions, len(self.target_word))
-        for pos, cipher_letter, real_letter in zip(
-            positions_for_letters, self.cipher_word, self.target_word
+        for letter_index, (pos, cipher_letter, real_letter) in enumerate(
+            zip(positions_for_letters, self.cipher_word, self.target_word)
         ):
-            self.cell_cipher_letters[pos] = (cipher_letter, real_letter)
+            self.cell_cipher_letters[pos] = (cipher_letter, real_letter, letter_index)
 
-        self.revealed_cipher_letters = []
+        self.revealed_cipher_letters = ["" for _ in self.target_word]
         self.remaining_guesses = self.max_guesses
 
     def render_board(self):
@@ -394,6 +465,8 @@ class MineCipherApp:
         self.update_input_labels()
         for label in self.final_word_labels:
             label.config(text=" ")
+            self.board_canvas.xview_moveto(0)
+            self.board_canvas.configure(scrollregion=self.board_canvas.bbox("all"))
 
     def refresh_letter_rows(self):
         for frame in (
@@ -452,6 +525,7 @@ class MineCipherApp:
         if self.numbers_board[row][col] == "M":
             self.reveal_mines()
             self.update_status_line("You hit a mine! Game over.")
+            self.reveal_target_word()
             self.end_game(
                 "Lost",
                 "You hit a mine! Do you want to replay?",
@@ -510,16 +584,14 @@ class MineCipherApp:
         if idx in self.revealed_cipher_positions:
             return
         self.revealed_cipher_positions.add(idx)
-        encoded, _ = self.cell_cipher_letters[idx]
-        self.revealed_cipher_letters.append(encoded)
+        encoded, _, letter_index = self.cell_cipher_letters[idx]
+        self.revealed_cipher_letters[letter_index] = encoded
         self.update_letter_displays()
 
     def update_letter_displays(self):
-        for idx in range(len(self.target_word)):
-            cipher_label = self.revealed_cipher_labels[idx]
-            cipher_label.config(text="")
-        for offset, cipher_letter in enumerate(self.revealed_cipher_letters):
-            self.revealed_cipher_labels[offset].config(text=cipher_letter)
+        for idx, label in enumerate(self.revealed_cipher_labels):
+            letter = self.revealed_cipher_letters[idx] if idx < len(self.revealed_cipher_letters) else ""
+            label.config(text=letter)
 
     def submit_guess(self):
         guess = self.guess_entry.get().strip().upper()
@@ -539,6 +611,7 @@ class MineCipherApp:
         self.guess_entry.delete(0, tk.END)
         if self.remaining_guesses <= 0:
             self.reveal_mines()
+            self.reveal_target_word()
             self.end_game(
                 "Lost",
                 "Out of guesses! The board has been revealed. Try again?",
@@ -576,6 +649,10 @@ class MineCipherApp:
             if self.numbers_board[row][col] == "M":
                 button = self.board_buttons[idx]
                 button.config(text="M", bg="#F87171", state="disabled")
+
+    def reveal_target_word(self):
+        for idx, label in enumerate(self.final_word_labels):
+            label.config(text=self.target_word[idx])
 
     def generate_random_board(self, rows, cols):
         choices = ["E", "E", "E", "E", "E", "M"]
@@ -641,11 +718,26 @@ class MineCipherApp:
     def atbash_encode(self, text):
         return "".join(chr(90 - (ord(char) - 65)) for char in text)
 
-    def vigenere_encode(self, text, key):
-        key = (key * ((len(text) // len(key)) + 1))[: len(text)]
-        return "".join(
-            chr((ord(c) + ord(k) - 130) % 26 + 65) for c, k in zip(text, key)
-        )
+    @staticmethod
+    def vigenere_encode(text, key):
+        """Vigenère cipher encoding"""
+        if not key:
+            raise ValueError("Vigenère cipher requires a key")
+
+        key = key.upper()
+        result = ""
+        key_index = 0
+
+        for char in text:
+            if char.isalpha():
+                start = ord('A') if char.isupper() else ord('a')
+                shift = ord(key[key_index % len(key)]) - ord('A')
+                result += chr((ord(char) - start + shift) % 26 + start)
+                key_index += 1
+            else:
+                result += char
+
+        return result
 
     def end_game(self, result, prompt, icon="info"):
         self.game_active = False
