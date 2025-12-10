@@ -60,28 +60,31 @@ def login():
     try:
         data = request.get_json()
         
-        # Validate required fields
-        if not data or not all(k in data for k in ('email', 'password')):
-            return jsonify({'message': 'Email and password required'}), 400
-        
-        email = data['email'].strip().lower()
+        if not data or 'password' not in data:
+            return jsonify({'message': 'Email/username and password required'}), 400
+
+        identifier = (data.get('email') or data.get('username') or '').strip()
+        if not identifier:
+            return jsonify({'message': 'Email or username required'}), 400
+
         password = data['password']
-        
-        # Find user by email
+
         from app import User
-        user = User.query.filter_by(email=email).first()
-        
+        user = User.query.filter_by(email=identifier.lower()).first()
+        if not user:
+            user = User.query.filter_by(username=identifier).first()
+
         if not user or not user.check_password(password):
             return jsonify({'message': 'Invalid credentials'}), 401
-        
+
         access_token = create_access_token(identity=str(user.id))
-        
+
         return jsonify({
             'message': 'Login successful',
             'user': user.to_dict(),
             'token': access_token
         }), 200
-        
+
     except Exception as e:
         return jsonify({'message': 'Login failed', 'error': str(e)}), 500
 
