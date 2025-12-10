@@ -56,24 +56,20 @@ def register():
 
 @auth_bp.route('/login', methods=['POST'])
 def login():
-    """Authenticate user and return access token (accepts email or username)"""
+    """Authenticate user and return access token"""
     try:
         data = request.get_json()
         
         # Validate required fields
-        if not data or not all(k in data for k in ('password',)):
-            return jsonify({'message': 'Email/username and password required'}), 400
+        if not data or not all(k in data for k in ('email', 'password')):
+            return jsonify({'message': 'Email and password required'}), 400
         
-        # Accept either email or username
-        identifier = data.get('email') or data.get('username')
-        if not identifier:
-            return jsonify({'message': 'Email or username required'}), 400
-        
+        email = data['email'].strip().lower()
         password = data['password']
         
-        # Find user by email or username
+        # Find user by email
         from app import User
-        user = User.query.filter_by(email=identifier.lower()).first() or User.query.filter_by(username=identifier).first()
+        user = User.query.filter_by(email=email).first()
         
         if not user or not user.check_password(password):
             return jsonify({'message': 'Invalid credentials'}), 401
@@ -83,7 +79,7 @@ def login():
         return jsonify({
             'message': 'Login successful',
             'user': user.to_dict(),
-            'access_token': access_token
+            'token': access_token
         }), 200
         
     except Exception as e:
